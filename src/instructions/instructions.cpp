@@ -553,45 +553,28 @@ const INSTRUCTION map_instructions[] = {
     [0xFF] = {INSTR_RST, 1, MODE_NONE, REG_NONE, REG_NONE, 0, 0x38}    
 };
 
-static INSTR_ARG createArg(void *data, size_t size) {
-    INSTR_ARG tmp;
-    tmp.data = data;
-    tmp.size = size;
-    return tmp;
-}
+unsigned char UNDEFINED_ARG;
 
-INSTR_ARG getFirstArg(INSTRUCTION instruction) {
+unsigned char &getFirstArg(INSTRUCTION instruction) {
     if (instruction.mode >= MODE_R && instruction.mode <= MODE_R_MR) {
         switch (instruction.r1)
         {
         case REG_A:
-            return createArg(&cpu.registers.a, 1);
+            return cpu.registers.reg_a;
         case REG_F:
-            return createArg(&cpu.registers.flags, 1);
-        case REG_AF:
-            return createArg(&cpu.registers.af, 2);
+            return cpu.registers.reg_flags;
         case REG_B:
-            return createArg(&cpu.registers.b, 1);
+            return cpu.registers.reg_b;
         case REG_C:
-            return createArg(&cpu.registers.c, 1);
-        case REG_BC:
-            return createArg(&cpu.registers.bc, 2);
+            return cpu.registers.reg_c;
         case REG_D:
-            return createArg(&cpu.registers.d, 1);
+            return cpu.registers.reg_d;
         case REG_E:
-            return createArg(&cpu.registers.e, 1);
-        case REG_DE:
-            return createArg(&cpu.registers.de, 2);
+            return cpu.registers.reg_e;
         case REG_H:
-            return createArg(&cpu.registers.h, 1);
+            return cpu.registers.reg_h;
         case REG_L:
-            return createArg(&cpu.registers.l, 1);
-        case REG_HL:
-            return createArg(cpu.registers.hl, 2);
-        case REG_PC:
-            return createArg(&cpu.registers.pc, 2);
-        case REG_SP:
-            return createArg(&cpu.registers.sp, 2);
+            return cpu.registers.reg_l;
         default:
             break;
         }
@@ -599,127 +582,48 @@ INSTR_ARG getFirstArg(INSTRUCTION instruction) {
         switch (instruction.r1)
         {
         case REG_A:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_A)], 1);
+            return read_mem(0xFF00 + read_reg(REG_A));
         case REG_F:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_F)], 1);
+            return read_mem(0xFF00 + read_reg(REG_F));
         case REG_AF:
-            return createArg(&ram.data[read_reg(REG_AF)], 2);
+            return read_mem(read_reg(REG_AF));
         case REG_B:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_B)], 1);
+            return read_mem(0xFF00 + read_reg(REG_B));
         case REG_C:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_C)], 1);
+            return read_mem(0xFF00 + read_reg(REG_C));
         case REG_BC:
-            return createArg(&ram.data[read_reg(REG_BC)], 2);
+            return read_mem(read_reg(REG_BC));
         case REG_D:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_D)], 1);
+            return read_mem(0xFF00 + read_reg(REG_D));
         case REG_E:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_E)], 1);
+            return read_mem(0xFF00 + read_reg(REG_E));
         case REG_DE:
-            return createArg(&ram.data[read_reg(REG_DE)], 2);
+            return read_mem(read_reg(REG_DE));
         case REG_H:
-            return createArg((&ram.data[0xFF00 + read_reg(REG_H)]), 1);
+            return read_mem(0xFF00 + read_reg(REG_H));
         case REG_L:
-            return createArg((&ram.data[0xFF00 + read_reg(REG_L)]), 1);
+            return read_mem(0xFF00 + read_reg(REG_L));
         case REG_HL:
-            return createArg(&ram.data[read_reg(REG_HL)], 2);
-        case MEM_A8:
-            return createArg(&ram.data[read_reg(REG_PC) + 1], 1);
-        case MEM_D8:
-        case MEM_R8:
-            return createArg(&ram.data[read_reg(REG_PC) + 1], 1);
-        case MEM_A16:
-        case MEM_D16:
-            return createArg(&ram.data[read_reg(REG_PC) + 1], 2);
+            return read_mem(read_reg(REG_HL));
         default:
             break;
         }
     }
-    return createArg(NULL, 0);
-}
-
-INSTR_ARG getSecondArg(INSTRUCTION instruction) {
-    if (instruction.mode == MODE_R_R || instruction.mode == MODE_A16_R || instruction.mode == MODE_A8_R || instruction.mode == MODE_MR_R) {
-        switch (instruction.r2)
-        {
-        case REG_A:
-            return createArg(&cpu.registers.a, 1);
-        case REG_F:
-            return createArg(&cpu.registers.flags, 1);
-        case REG_AF:
-            return createArg(&cpu.registers.af, 2);
-        case REG_B:
-            return createArg(&cpu.registers.b, 1);
-        case REG_C:
-            return createArg(&cpu.registers.c, 1);
-        case REG_BC:
-            return createArg(&cpu.registers.bc, 2);
-        case REG_D:
-            return createArg(&cpu.registers.d, 1);
-        case REG_E:
-            return createArg(&cpu.registers.e, 1);
-        case REG_DE:
-            return createArg(&cpu.registers.de, 2);
-        case REG_H:
-            return createArg(&cpu.registers.h, 1);
-        case REG_L:
-            return createArg(&cpu.registers.l, 1);
-        case REG_HL:
-            return createArg(cpu.registers.hl, 2);
-        case REG_PC:
-            return createArg(&cpu.registers.pc, 2);
-        case REG_SP:
-            return createArg(&cpu.registers.sp, 2);
-        default:
-            break;
-        }
-    } else {
-        switch (instruction.r2)
-        {
-        case REG_A:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_A)], 1);
-        case REG_F:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_F)], 1);
-        case REG_AF:
-            return createArg(&ram.data[read_reg(REG_AF)], 2);
-        case REG_B:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_B)], 1);
-        case REG_C:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_C)], 1);
-        case REG_BC:
-            return createArg(&ram.data[read_reg(REG_BC)], 2);
-        case REG_D:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_D)], 1);
-        case REG_E:
-            return createArg(&ram.data[0xFF00 + read_reg(REG_E)], 1);
-        case REG_DE:
-            return createArg(&ram.data[read_reg(REG_DE)], 2);
-        case REG_H:
-            return createArg((&ram.data[0xFF00 + read_reg(REG_H)]), 1);
-        case REG_L:
-            return createArg((&ram.data[0xFF00 + read_reg(REG_L)]), 1);
-        case REG_HL:
-            return createArg(&ram.data[read_reg(REG_HL)], 2);
-        case MEM_A8:
-            return createArg(&ram.data[read_reg(REG_PC) + 1], 1);
-        case MEM_D8:
-        case MEM_R8:
-            return createArg(&ram.data[read_reg(REG_PC) + 1], 1);
-        case MEM_A16:
-        case MEM_D16:
-            return createArg(&ram.data[read_reg(REG_PC) + 1], 2);
-        default:
-            break;
-        }
-    }
-    return createArg(NULL, 0);
+    return UNDEFINED_ARG;
 }
 
 INSTRUCTION getCBInstruction(unsigned char opcode) {
-    return map_cb_instructions[opcode];
+    INSTRUCTION tmp = map_cb_instructions[opcode];
+
+    tmp.opcode = opcode;
+    return tmp;
 }
 
 INSTRUCTION getInstruction(unsigned char opcode) {
-    return map_instructions[opcode];
+    INSTRUCTION tmp = map_instructions[opcode];
+
+    tmp.opcode = opcode;
+    return tmp;
 }
 
 int valid_conditions(INSTRUCTION instruction) {
@@ -743,15 +647,13 @@ int valid_conditions(INSTRUCTION instruction) {
     return 1;
 }
 
-static unsigned long count = 0;
-
 void debug_pc(INSTRUCTION instruction) {
     if (!enable_print)
         return ;
-    printf("\n%ld :\n", count++);
+    printf("\n%ld :\n", count);
     printf("%s", ANSI_GREEN);
     for (int i = 0; i < (instruction.size ? instruction.size : 1); i++)
-        printf("%02hhX ", read_mem(read_reg(REG_PC) + 1));
+        printf("%02hhX ", read_mem(read_reg(REG_PC) + i));
     printf("%s\nPC: 0x%02hX\tAF: %04hX\033[0m\tBC: %04hX\tDE: %04hX\tHL: %04hX\tSP: %04hX\tLY: %02hX\tFLAGS: %c%c%c%c\tCondition: %s%c%c%c%c%c%s\n",
         ANSI_RESET,
         cpu.registers.pc,
@@ -761,10 +663,10 @@ void debug_pc(INSTRUCTION instruction) {
         *(unsigned short*)cpu.registers.hl,
         cpu.registers.sp,
         io_data[0x44],
-        (cpu.registers.flags & (1 << FLAG_Z)) ? 'Z' : '-',
-        (cpu.registers.flags & (1 << FLAG_N)) ? 'N' : '-',
-        (cpu.registers.flags & (1 << FLAG_H)) ? 'H' : '-',
-        (cpu.registers.flags & (1 << FLAG_C)) ? 'C' : '-',
+        (cpu.registers.reg_flags & (1 << FLAG_Z)) ? 'Z' : '-',
+        (cpu.registers.reg_flags & (1 << FLAG_N)) ? 'N' : '-',
+        (cpu.registers.reg_flags & (1 << FLAG_H)) ? 'H' : '-',
+        (cpu.registers.reg_flags & (1 << FLAG_C)) ? 'C' : '-',
         instruction.conditionalFlag <= (1 << 3) ? (instruction.conditionalFlag != 0 ? ANSI_RED : "") : ANSI_GREEN,
         instruction.conditionalFlag? '\0' : '-',
         (instruction.conditionalFlag & (1 << FLAG_Z)) || (instruction.conditionalFlag & (1 << COND_NZ)) ? 'Z' : '\0',
@@ -784,10 +686,9 @@ void debug_pc(INSTRUCTION instruction) {
 
 void instruction_process(INSTRUCTION instruction) {
 
-    INSTR_ARG firstArg = getFirstArg(instruction);
-    INSTR_ARG secondArg = getSecondArg(instruction);
+    unsigned char &firstArg = getFirstArg(instruction);
     debug_pc(instruction);
-    usleep(1000 * 30);
+    // usleep(1000 * 30);
 
     if (instruction.instruction == INSTR_NONE) {
         printf("NONE INSTRUCTION : error\n");
@@ -795,14 +696,7 @@ void instruction_process(INSTRUCTION instruction) {
         return ;
     }
 
-    if (!valid_conditions(instruction)) {
-        GO_NEXT_INSTR
-        dbg_update();
-        dbg_print();
-        return ;
-    }
-
-    map_process[instruction.instruction](instruction, firstArg, secondArg);
+    execute_process(instruction, firstArg);
     dbg_update();
     dbg_print();
 }

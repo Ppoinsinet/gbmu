@@ -4,7 +4,7 @@
 
 void int_handle(unsigned short addr) {
     push_stack(cpu.registers.pc);
-    cpu.registers.pc = addr;
+    set_reg(REG_PC, addr);
 }
 
 char int_check(unsigned short addr, INT_TYPE type) {
@@ -19,6 +19,7 @@ char int_check(unsigned short addr, INT_TYPE type) {
 }
 
 void cpu_handle_interrupts() {
+    printf("Before : %d et %d\n", cpu.int_flags, cpu.ie_register);
     if (int_check(0x40, INT_VBLANK)) {
 
     } else if (int_check(0x48, INT_LCD_STAT)) {
@@ -30,4 +31,5 @@ void cpu_handle_interrupts() {
     } else if (int_check(0x60, INT_JOYPAD)) {
         
     }
+    printf("After : %d et %d\n", cpu.int_flags, cpu.ie_register);
 }

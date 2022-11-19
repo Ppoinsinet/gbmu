@@ -5,9 +5,11 @@
 static char dbg_msg[1024] = {0};
 static int msg_size = 0;
 
-char enable_print = 0;
+char enable_print = 1;
 
-unsigned short breakpoints[] = {};
+const std::vector<int> breakpoints = {
+    
+};
 
 void dbg_update() {
     if (read_mem(0xFF02) == 0x81) {
@@ -20,7 +22,6 @@ void dbg_update() {
 
 void dbg_print() {
     if (dbg_msg[0]) {
-        printf("DEBUG : %s\n", dbg_msg);
-        exit(3);
+        // fprintf(stderr, "DEBUG : %s\n", dbg_msg);
     }
 }

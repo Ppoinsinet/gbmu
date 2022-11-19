@@ -1,4 +1,5 @@
 #include <ui.h>
+#include <SDL2/SDL.h>
 
 SDL_Window *window;
 SDL_Renderer *renderer;

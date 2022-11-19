@@ -6,27 +6,29 @@
 typedef struct {
     struct {
         unsigned char af[2];
-#define a af[1]
-#define flags af[0]
+#define reg_a af[1]
+#define reg_flags af[0]
         unsigned char bc[2];
-#define b bc[1]
-#define c bc[0]
+#define reg_b bc[1]
+#define reg_c bc[0]
         unsigned char de[2];
-#define d de[1]
-#define e de[0]
+#define reg_d de[1]
+#define reg_e de[0]
         unsigned char hl[2];
-#define h hl[1]
-#define l hl[0]
+#define reg_h hl[1]
+#define reg_l hl[0]
         unsigned short sp;
         unsigned short pc;
     } registers;
 
-    char IME; //Interrupt Master Enable flag
-    char enabling_IME;
-    char halt; //Halt flag
-    char int_flags;
-    char ie_register;
+    unsigned char IME; //Interrupt Master Enable flag
+    unsigned char enabling_IME;
+    unsigned char halt; //Halt flag
+    unsigned char int_flags;
+    unsigned char ie_register;
     unsigned long ticks;
+    
+    unsigned increment_ly : 1;
 } CPU;
 
 enum REGISTERS {
@@ -62,6 +64,8 @@ enum REGISTERS {
 #define COND_NH 3
 #define COND_NN 0
 
+void init_cpu();
+
 int cpu_get_flag(unsigned char flag);
 void cpu_set_flag(char condition, int flag);
 
@@ -71,5 +75,7 @@ void set_reg(int reg, unsigned short val);
 extern CPU cpu;
 
 void request_interrupt(int type);
+
+void emu_cycle(unsigned short n);
 
 #endif

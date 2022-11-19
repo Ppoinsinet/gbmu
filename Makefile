@@ -1,22 +1,35 @@
-SRC = main.c cartridge.c cpu.c instructions.c ram.c instructions_proc.c ui.c bus.c dbg.c interrupts.c io.c timer.c
+SRC = main.cpp \
+	cartridge.cpp \
+	cpu.cpp \
+	ram.cpp \
+	ui.cpp \
+	bus.cpp \
+	dbg.cpp \
+	interrupts.cpp \
+	io.cpp \
+	timer.cpp \
+	instructions/instructions.cpp \
+	instructions/ld.cpp \
+	instructions/instructions_proc.cpp \
+	instructions/cb_instructions.cpp
 
-OBJS = $(addprefix src/, $(SRC:.c=.o))
+OBJS = $(addprefix src/, $(SRC:.cpp=.o))
 
 INCLUDE = include/
 
 NAME = mygbmu
 
-FLAGS = 
+FLAGS =
 
-CC = gcc
+CC = clang++
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) -o $(NAME) -lSDL2 -lpthread $(OBJS)
+	$(CC) $(FLAGS) -o $(NAME) -lSDL2 -lpthread $(OBJS) -std=c++11
 
-.c.o:
-	$(CC) -c $< -o $(<:.c=.o) -I$(INCLUDE)
+.cpp.o:
+	$(CC) -c $< -o $(<:.cpp=.o) -I$(INCLUDE) $(FLAGS) -std=c++11
 
 fclean: clean
 	rm -rf $(NAME)

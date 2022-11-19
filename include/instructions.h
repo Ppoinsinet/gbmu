@@ -102,84 +102,83 @@ typedef struct {
     unsigned char conditionalFlag;
 
     char param;
+    unsigned char opcode;
 
 } INSTRUCTION;
 
-typedef struct {
-    void *data;
-    unsigned long size;
-} INSTR_ARG;
+typedef void (*INSTR_FUNCTION)(INSTRUCTION, unsigned char &);
 
-typedef void (*INSTR_FUNCTION)(INSTRUCTION, INSTR_ARG, INSTR_ARG);
+extern unsigned long count;
 
-extern const INSTRUCTION map_instructions[];
-extern const INSTR_FUNCTION map_process[];
+
+void execute_process(INSTRUCTION instruction, unsigned char &arg1);
 
 INSTRUCTION getInstruction(unsigned char opcode);
 INSTRUCTION getCBInstruction(unsigned char opcode);
 
-INSTR_ARG getFirstArg(INSTRUCTION instruction);
-INSTR_ARG getSecondArg(INSTRUCTION instruction);
+unsigned char &getFirstArg(INSTRUCTION instruction);
 
 void instruction_process(INSTRUCTION instruction);
 
-void process_XOR(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_NOP(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_JP(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_LD(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+int valid_conditions(INSTRUCTION instruction);
+
+void process_XOR(INSTRUCTION instruction, unsigned char &arg1);
+void process_NOP(INSTRUCTION instruction, unsigned char &arg1);
+void process_JP(INSTRUCTION instruction, unsigned char &arg1);
+void process_LD(INSTRUCTION instruction, unsigned char &arg1);
 
 
-void process_INC(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_ADD(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_ADC(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SBC(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SUB(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_DEC(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_INC(INSTRUCTION instruction, unsigned char &arg1);
+void process_ADD(INSTRUCTION instruction, unsigned char &arg1);
+void process_ADC(INSTRUCTION instruction, unsigned char &arg1);
+void process_SBC(INSTRUCTION instruction, unsigned char &arg1);
+void process_SUB(INSTRUCTION instruction, unsigned char &arg1);
+void process_DEC(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_CCF(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_DAA(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_CCF(INSTRUCTION instruction, unsigned char &arg1);
+void process_DAA(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_LDI(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_LDD(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_JR(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_DI(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_EI(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_LDH(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_CP(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_OR(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_CPL(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_AND(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_LDI(INSTRUCTION instruction, unsigned char &arg1);
+void process_LDD(INSTRUCTION instruction, unsigned char &arg1);
+void process_JR(INSTRUCTION instruction, unsigned char &arg1);
+void process_DI(INSTRUCTION instruction, unsigned char &arg1);
+void process_EI(INSTRUCTION instruction, unsigned char &arg1);
+void process_LDH(INSTRUCTION instruction, unsigned char &arg1);
+void process_CP(INSTRUCTION instruction, unsigned char &arg1);
+void process_OR(INSTRUCTION instruction, unsigned char &arg1);
+void process_CPL(INSTRUCTION instruction, unsigned char &arg1);
+void process_AND(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_POP(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_PUSH(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_POP(INSTRUCTION instruction, unsigned char &arg1);
+void process_PUSH(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_STOP(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_STOP(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_CALL(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RET(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RETI(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RST(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_CALL(INSTRUCTION instruction, unsigned char &arg1);
+void process_RET(INSTRUCTION instruction, unsigned char &arg1);
+void process_RETI(INSTRUCTION instruction, unsigned char &arg1);
+void process_RST(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_HALT(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_HALT(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_SCF(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_CCF(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_SCF(INSTRUCTION instruction, unsigned char &arg1);
+void process_CCF(INSTRUCTION instruction, unsigned char &arg1);
 
-void process_CB(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RLC(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RLCA(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RRC(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RL(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RLA(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RR(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RRA(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SLA(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SRA(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SWAP(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SRL(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_BIT(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_RES(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
-void process_SET(INSTRUCTION instruction, INSTR_ARG arg1, INSTR_ARG arg2);
+void process_CB(INSTRUCTION instruction, unsigned char &arg1);
+void process_RLC(INSTRUCTION instruction, unsigned char &arg1);
+void process_RLCA(INSTRUCTION instruction, unsigned char &arg1);
+void process_RRC(INSTRUCTION instruction, unsigned char &arg1);
+void process_RL(INSTRUCTION instruction, unsigned char &arg1);
+void process_RLA(INSTRUCTION instruction, unsigned char &arg1);
+void process_RR(INSTRUCTION instruction, unsigned char &arg1);
+void process_RRA(INSTRUCTION instruction, unsigned char &arg1);
+void process_SLA(INSTRUCTION instruction, unsigned char &arg1);
+void process_SRA(INSTRUCTION instruction, unsigned char &arg1);
+void process_SWAP(INSTRUCTION instruction, unsigned char &arg1);
+void process_SRL(INSTRUCTION instruction, unsigned char &arg1);
+void process_BIT(INSTRUCTION instruction, unsigned char &arg1);
+void process_RES(INSTRUCTION instruction, unsigned char &arg1);
+void process_SET(INSTRUCTION instruction, unsigned char &arg1);
 
 
 #endif

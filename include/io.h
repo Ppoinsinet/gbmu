@@ -5,7 +5,9 @@
 
 extern unsigned char io_data[0xFF];
 
-unsigned char read_io(unsigned short addr);
+unsigned char &read_io(unsigned short addr);
 void write_io(unsigned short addr, unsigned char val);
+
+void increment_ly();
 
 #endif
