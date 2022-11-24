@@ -18,8 +18,8 @@ void push_stack(unsigned short data) {
 
 //todo emu cycles
 unsigned short pop_stack() {
-    if (read_reg(REG_SP) >= 0xDFFE)
-        ERROR("Stack pointer greater than 0xDFFE");
+    // if (read_reg(REG_SP) >= 0xDFFE)
+    //     ERROR("Stack pointer greater than 0xDFFE");
 
     unsigned short ret = read_mem(read_reg(REG_SP));
     set_reg(REG_SP, read_reg(REG_SP) + 1);

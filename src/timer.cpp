@@ -76,9 +76,8 @@ void Timer::tick() {
         if (tima == 0xFF) {
             tima = tma;
 
-            std::cout << "Request interrupt";
-            exit(3);
-
+            std::cerr << "Request interrupt";
+            
             request_interrupt(INT_TIMER);
         }
     }

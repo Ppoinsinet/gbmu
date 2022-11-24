@@ -68,7 +68,7 @@ unsigned char &read_mem(unsigned short addr) {
 }
 
 void write_mem(unsigned short addr, unsigned char val) {
-    if (enable_print) printf("Writing mem : (0x%04X) = %02hhX\n", addr, val);
+    // if (enable_print) printf("Writing mem : (0x%04X) = %02hhX\n", addr, val);
 
     if (addr < 0x8000) {
         //ROM data
@@ -125,7 +125,7 @@ unsigned short read_mem16(unsigned short addr) {
 }
 
 void write_mem16(unsigned short addr, unsigned short val) {
-    if (enable_print) printf("Writing mem : (0x%04X) = %02hX\n", addr, val);
+    // if (enable_print) printf("Writing mem : (0x%04X) = %02hX\n", addr, val);
     ram.data[addr] = (val & 0x00FF);
     ram.data[addr + 1] = (val & 0xFF00) >> 8;
 }

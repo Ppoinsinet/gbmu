@@ -25,8 +25,8 @@ unsigned long count = 0;
 void execute_loop() {
     while (1) {
 
-        // if (enable_print)
-        //         usleep(1000);
+        if (enable_print)
+                usleep(1000 * 25);
 
         if (!cpu.halt) {
 
@@ -128,8 +128,7 @@ int main(int ac, char **av) {
     init_cpu();
     timer.set_div(0xABCC);
     if (pthread_create(&working_thread, NULL, execute_program, NULL)) {
-        printf("Could not start display thread\n");
-        exit(2);
+        fprintf(stderr, "Could not start display thread\n");
     }
 
     start_display(NULL);

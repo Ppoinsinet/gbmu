@@ -14,9 +14,11 @@ static void process_ld_F9(INSTRUCTION instruction, unsigned char &arg1);
 static void process_ld_EA(INSTRUCTION instruction, unsigned char &arg1);
 
 void process_LD(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("LD process\n");
+     #if PRINT_PROCESS == 1
+        if (enable_print) printf("LD process\n");
+    #endif
 
-    if (IS_BETWEEN(0x3F, instruction.opcode, 0x80))
+    if (IS_BETWEEN(0x40, instruction.opcode, 0x7F))
         process_ld_40(instruction, arg1);
     else if (instruction.opcode == 0x01 || instruction.opcode == 0x11 || instruction.opcode == 0x21 || instruction.opcode == 0x31)
         process_ld_01(instruction, arg1);
@@ -24,6 +26,15 @@ void process_LD(INSTRUCTION instruction, unsigned char &arg1) {
         process_ld_02(instruction, arg1);
     else if (instruction.opcode == 0x06 || instruction.opcode == 0x16 || instruction.opcode == 0x26 || instruction.opcode == 0x36)
         process_ld_06(instruction, arg1);
+    else if (instruction.opcode == 0x08) {
+        unsigned short nn = read_mem(read_reg(REG_PC) + 1);
+        emu_cycle(1);
+        nn |= (read_mem(read_reg(REG_PC) + 2) << 8);
+        emu_cycle(1);
+
+        write_mem(nn, read_reg(REG_SP));
+        emu_cycle(2);
+    }
     else if (instruction.opcode == 0x0A || instruction.opcode == 0x1A)
         process_ld_0A(instruction, arg1);
     else if (instruction.opcode == 0x0E || instruction.opcode == 0x1E || instruction.opcode == 0x2E || instruction.opcode == 0x3E)

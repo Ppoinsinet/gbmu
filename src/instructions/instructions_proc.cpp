@@ -63,7 +63,9 @@ void execute_process(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_RST(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("RST process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("RST process\n");
+    #endif
 
     emu_cycle(1);
     push_stack(read_reg(REG_PC) + instruction.size);
@@ -74,7 +76,9 @@ void process_RST(INSTRUCTION instruction, unsigned char &arg1) {
 
 
 void process_CB(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("CB prefix process : %hhX\n", read_mem(read_reg(REG_PC) + 1));
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("CB prefix process : %hhX\n", read_mem(read_reg(REG_PC) + 1));
+    #endif
 
     GO_NEXT_INSTR
     const INSTRUCTION next_instr = getCBInstruction(read_mem(read_reg(REG_PC)));
@@ -86,7 +90,9 @@ void process_CB(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_PUSH(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("PUSH process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("PUSH process\n");
+    #endif
 
     switch (instruction.opcode & 0xF0)
     {
@@ -111,7 +117,9 @@ void process_PUSH(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_POP(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("POP process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("POP process\n");
+    #endif
 
     unsigned short ret = pop_stack();
     
@@ -139,7 +147,9 @@ void process_POP(INSTRUCTION instruction, unsigned char &arg1) {
 
 
 void process_RETI(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("RETI process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("RETI process\n");
+    #endif
 
     unsigned short nn = pop_stack();
     set_reg(REG_PC, nn);
@@ -148,7 +158,9 @@ void process_RETI(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_RET(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("RET process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("RET process\n");
+    #endif
 
     switch (instruction.opcode)
     {
@@ -178,14 +190,18 @@ void process_RET(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_STOP(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("TODO: STOP process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("TODO: STOP process\n");
+    #endif
 
     NO_IMPL
     GO_NEXT_INSTR
 }
 
 void process_CALL(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("CALL process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("CALL process\n");
+    #endif
 
     switch (instruction.opcode)
     {
@@ -224,7 +240,9 @@ void process_CALL(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_CP(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("CP process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("CP process\n");
+    #endif
 
     unsigned char tmp = 0;
     switch (instruction.r1)
@@ -275,7 +293,9 @@ void process_CP(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_LDH(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("LDH process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("LDH process\n");
+    #endif
 
     switch (instruction.opcode)
     {
@@ -307,56 +327,46 @@ void process_LDH(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_EI(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("EI process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("EI process\n");
+    #endif
 
     cpu.enabling_IME = 1;
     GO_NEXT_INSTR
 }
 
 void process_DI(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("DI process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("DI process\n");
+    #endif
 
     cpu.IME = 0;
     GO_NEXT_INSTR
 }
 
+
 void process_JR(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("JR process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("JR process\n");
+    #endif
     
-    switch (instruction.opcode)
-    {
-    case 0x18: {
-
-        char offset = (char)read_mem(read_reg(REG_PC) + 1);
-        fprintf(stderr, "allo %hhd pour %hhu\n", offset, read_mem(read_reg(REG_PC) + 1));
-        emu_cycle(1);
-        set_reg(REG_PC, read_reg(REG_PC) + instruction.size + offset);
-        emu_cycle(1);
-    } break;
-    case 0x20:
-    case 0x30:
-    case 0x28:
-    case 0x38: {
-
-        char offset = (char)read_mem(read_reg(REG_PC) + 1);
-        fprintf(stderr, "allo %hhd pour %hhu\n", offset, read_mem(read_reg(REG_PC) + 1));
-        emu_cycle(1);
-        if (!valid_conditions(instruction)) {
-            GO_NEXT_INSTR
-            return;
-        }
-        set_reg(REG_PC, read_reg(REG_PC) + instruction.size + offset);
-        emu_cycle(1);
-    } break;
     
-    default:
-        ERROR("Probleme avec JR");
-        break;
+    char offset = *(char *)&read_mem(read_reg(REG_PC) + 1);
+    // fprintf(stderr, "allo %hhd pour %hhu\n", offset, read_mem(read_reg(REG_PC) + 1));
+    emu_cycle(1);
+    if (!valid_conditions(instruction)) {
+        GO_NEXT_INSTR
+        return;
     }
+    set_reg(REG_PC, read_reg(REG_PC) + instruction.size + offset);
+    emu_cycle(1);
+    
 }
 
 void process_LDD(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("LDD process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("LDD process\n");
+    #endif
 
     switch (instruction.opcode)
     {
@@ -381,7 +391,9 @@ void process_LDD(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_LDI(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("LDI process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("LDI process\n");
+    #endif
 
     switch (instruction.opcode)
     {
@@ -405,7 +417,9 @@ void process_LDI(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_ADC(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("ADC process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("ADC process\n");
+    #endif
 
     int a = read_reg(REG_A);
     int flagc = cpu_get_flag(FLAG_C);
@@ -422,7 +436,9 @@ void process_ADC(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_SUB(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("SUB process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("SUB process\n");
+    #endif
 
     unsigned char old = read_reg(REG_A);
     unsigned char newVal;
@@ -472,7 +488,9 @@ void process_SUB(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_SBC(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("SBC process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("SBC process\n");
+    #endif
 
     unsigned char old = read_reg(REG_A);
     unsigned char newVal = arg1;
@@ -490,7 +508,9 @@ void process_SBC(INSTRUCTION instruction, unsigned char &arg1) {
 
 
 void process_ADD(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("ADD process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("ADD process\n");
+    #endif
 
     //TODO set flags
 
@@ -581,7 +601,9 @@ void process_ADD(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_INC(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("INC process : %p\n", arg1);
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("INC process : %p\n", arg1);
+    #endif
     
     switch (instruction.opcode)
     {
@@ -668,7 +690,9 @@ void process_INC(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_DAA(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("TODO: DAA process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("TODO: DAA process\n");
+    #endif
     unsigned char to_add = 0;
 
     if (cpu_get_flag(FLAG_N)) {
@@ -764,14 +788,18 @@ void process_DAA(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_HALT(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("HALT process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("HALT process\n");
+    #endif
     cpu.halt = 1;
     // exit(2);
     GO_NEXT_INSTR
 }
 
 void process_DEC(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("DEC process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("DEC process\n");
+    #endif
 
     switch (instruction.opcode)
     {
@@ -857,7 +885,9 @@ void process_DEC(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_OR(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("OR process : %02X\n", arg1);
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("OR process : %02X\n", arg1);
+    #endif
     
     set_reg(REG_A, read_reg(REG_A) | arg1);
 
@@ -869,7 +899,9 @@ void process_OR(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_XOR(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("XOR process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("XOR process\n");
+    #endif
 
     //TODO set les bits pour toutes les instructions
     switch (instruction.mode)
@@ -918,27 +950,22 @@ void process_XOR(INSTRUCTION instruction, unsigned char &arg1) {
 }
 
 void process_NOP(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("NOP process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("NOP process\n");
+    #endif
     GO_NEXT_INSTR
 }
 
 void process_JP(INSTRUCTION instruction, unsigned char &arg1) {
-    if (enable_print) printf("JP process\n");
+    #if PRINT_PROCESS == 1
+        if (enable_print) printf("JP process\n");
+    #endif
     
     unsigned short val = 0;
     switch (instruction.opcode)
     {
-        case 0xC3: {
-
-            unsigned short nn = read_mem(read_reg(REG_PC) + 1);
-            emu_cycle(1);
-            nn |= (read_mem(read_reg(REG_PC) + 2) << 8);
-            emu_cycle(2);
-            set_reg(REG_PC, nn);
-        } break;
         case 0xE9:
             set_reg(REG_PC, read_reg(REG_HL));
-            emu_cycle(1);
             break;
         default: {
             unsigned short nn = read_mem(read_reg(REG_PC) + 1);

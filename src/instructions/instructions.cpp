@@ -305,7 +305,7 @@ const INSTRUCTION map_instructions[] = {
     [0x15] = {INSTR_DEC, 1, MODE_R, REG_D},
     [0x16] = {INSTR_LD, 2, MODE_R_D8, REG_D, MEM_D8},
     [0x17] = {INSTR_RLA, 1},
-    [0x18] = {INSTR_JR, 2, MODE_R8, MEM_R8},
+    [0x18] = {INSTR_JR, 2, MODE_R8, MEM_R8, REG_NONE, 0},
     [0x19] = {INSTR_ADD, 1, MODE_R_R, REG_HL, REG_DE},
     [0x1A] = {INSTR_LD, 1, MODE_R_MR, REG_A, REG_DE},
     [0x1B] = {INSTR_DEC, 1, MODE_R, REG_DE},
@@ -339,7 +339,7 @@ const INSTRUCTION map_instructions[] = {
     [0x35] = {INSTR_DEC, 1, MODE_MR, REG_HL},
     [0x36] = {INSTR_LD, 2, MODE_MR_D8, REG_HL, MEM_D8},
     [0x37] = {INSTR_SCF, 1},
-    [0x38] = {INSTR_JR, 2, MODE_R8, MEM_R8, REG_NONE, FLAG_C},
+    [0x38] = {INSTR_JR, 2, MODE_R8, MEM_R8, REG_NONE, (1 << FLAG_C)},
     [0x39] = {INSTR_ADD, 1, MODE_R_R, REG_HL, REG_SP},
     [0x3A] = {INSTR_LDD, 1, MODE_R_MR, REG_A, REG_HL}, //check
     [0x3B] = {INSTR_DEC, 1, MODE_R, REG_SP},
@@ -651,11 +651,11 @@ void debug_pc(INSTRUCTION instruction) {
     if (!enable_print)
         return ;
     printf("\n%ld :\n", count);
-    printf("%s", ANSI_GREEN);
+    // printf("%s", ANSI_GREEN);
     for (int i = 0; i < (instruction.size ? instruction.size : 1); i++)
         printf("%02hhX ", read_mem(read_reg(REG_PC) + i));
-    printf("%s\nPC: 0x%02hX\tAF: %04hX\033[0m\tBC: %04hX\tDE: %04hX\tHL: %04hX\tSP: %04hX\tLY: %02hX\tFLAGS: %c%c%c%c\tCondition: %s%c%c%c%c%c%s\n",
-        ANSI_RESET,
+    // printf(ANSI_RESET);
+    printf("\nPC: 0x%02hX\tAF: %04hX\033[0m\tBC: %04hX\tDE: %04hX\tHL: %04hX\tSP: %04hX\tLY: %02hX\tFLAGS: %c%c%c%c\tCondition: %s%c%c%c%c%c%s\n",
         cpu.registers.pc,
         *(unsigned short*)cpu.registers.af,
         *(unsigned short*)cpu.registers.bc,

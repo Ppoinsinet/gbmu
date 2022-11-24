@@ -38,8 +38,7 @@ void cpu_set_flag(char condition, int flag) {
 
 int cpu_get_flag(unsigned char flag) {
     if (flag > 7) {
-        printf("Wrong flag read\n");
-        exit(5);
+        fprintf(stderr, "Wrong flag read\n");
     }
     return (cpu.registers.reg_flags & (1 << flag)) != 0 ? 1 : 0;
 }
@@ -77,8 +76,8 @@ unsigned short read_reg(int reg) {
         return cpu.registers.pc;
     
     default:
-        printf("Error on read_reg : %d\n", reg);
-        exit(4);
+        fprintf(stderr, "Error on read_reg : %d\n", reg);
+        exit(2);
     }
 }
 
@@ -86,59 +85,59 @@ void set_reg(int reg, unsigned short val) {
     switch (reg)
     {
     case REG_A:
-        if (enable_print) printf("Setting REG_A = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_A = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_a = (unsigned char)(val & 0x00FF);
         break;
     case REG_F:
-        if (enable_print) printf("Setting REG_F = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_F = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_flags = (unsigned char)(val & 0x00FF);
         break;
     case REG_AF:
-        if (enable_print) printf("Setting REG_AF = %02hX\n", val);
+        // if (enable_print) printf("Setting REG_AF = %02hX\n", val);
         cpu.registers.af[0] = (unsigned char)(val & 0x00FF);
         cpu.registers.af[1] = (unsigned char)((val & 0xFF00) >> 8);
         break;
     case REG_B:
-        if (enable_print) printf("Setting REG_B = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_B = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_b = (unsigned char)(val & 0x00FF);
         break;
     case REG_C:
-        if (enable_print) printf("Setting REG_C = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_C = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_c = (unsigned char)(val & 0x00FF);
         break;
     case REG_BC:
-        if (enable_print) printf("Setting REG_BC = %02hX\n", val);
+        // if (enable_print) printf("Setting REG_BC = %02hX\n", val);
         cpu.registers.bc[0] = (unsigned char)(val & 0x00FF);
         cpu.registers.bc[1] = (unsigned char)((val & 0xFF00) >> 8);
         break;
     case REG_D:
-        if (enable_print) printf("Setting REG_D = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_D = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_d = (unsigned char)(val & 0x00FF);
         break;
     case REG_E:
-        if (enable_print) printf("Setting REG_E = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_E = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_e = (unsigned char)(val & 0x00FF);
         break;
     case REG_DE:
-        if (enable_print) printf("Setting REG_DE = %02hX\n", val);
+        // if (enable_print) printf("Setting REG_DE = %02hX\n", val);
         cpu.registers.de[0] = (unsigned char)(val & 0x00FF);
         cpu.registers.de[1] = (unsigned char)((val & 0xFF00) >> 8);
         break;
     case REG_H:
-        if (enable_print) printf("Setting REG_H = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_H = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_h = (unsigned char)(val & 0x00FF);
         break;
     case REG_L:
-        if (enable_print) printf("Setting REG_L = %02hhX\n", (unsigned char)(val & 0x00FF));
+        // if (enable_print) printf("Setting REG_L = %02hhX\n", (unsigned char)(val & 0x00FF));
         cpu.registers.reg_l = (unsigned char)(val & 0x00FF);
         break;
     case REG_HL:
-        if (enable_print) printf("Setting REG_HL = %02hX\n", val);
+        // if (enable_print) printf("Setting REG_HL = %02hX\n", val);
         cpu.registers.hl[0] = (unsigned char)(val & 0x00FF);
         cpu.registers.hl[1] = (unsigned char)((val & 0xFF00) >> 8);
         break;
     case REG_SP:
-        if (enable_print) printf("Setting REG_SP = %02hX\n", val);
+        // if (enable_print) printf("Setting REG_SP = %02hX\n", val);
         cpu.registers.sp = val;
         break;
     case REG_PC:

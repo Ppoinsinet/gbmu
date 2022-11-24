@@ -22,6 +22,6 @@ void dbg_update() {
 
 void dbg_print() {
     if (dbg_msg[0]) {
-        // fprintf(stderr, "DEBUG : %s\n", dbg_msg);
+        fprintf(stderr, "DEBUG : %s\n", dbg_msg);
     }
 }
