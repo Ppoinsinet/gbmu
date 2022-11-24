@@ -1,5 +1,6 @@
 #include <instructions.h>
 #include <dbg.h>
+#include <common.h>
 
 void process_SWAP(INSTRUCTION instruction, unsigned char &arg1) {
     #if PRINT_PROCESS == 1
